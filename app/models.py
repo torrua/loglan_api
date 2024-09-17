@@ -13,7 +13,7 @@ class Base(BaseModel):
         from_attributes = True
 
 
-class BaseWordResponse(Base):
+class WordResponse(Base):
     name: str
     type_id: int
     event_start_id: int
@@ -27,7 +27,7 @@ class BaseWordResponse(Base):
     notes: Optional[Dict[str, str]]
 
 
-class BaseDefinitionResponse(Base):
+class DefinitionResponse(Base):
     word_id: int
     position: int
     body: str
@@ -39,13 +39,13 @@ class BaseDefinitionResponse(Base):
     notes: Optional[constr(max_length=255)]
 
 
-class BaseAuthorResponse(Base):
+class AuthorResponse(Base):
     abbreviation: constr(max_length=64)
     full_name: Optional[constr(max_length=64)]
     notes: Optional[constr(max_length=128)]
 
 
-class BaseTypeResponse(Base):
+class TypeResponse(Base):
     type_: constr(max_length=16)
     type_x: constr(max_length=16)
     group: constr(max_length=16)
@@ -53,7 +53,7 @@ class BaseTypeResponse(Base):
     description: Optional[constr(max_length=255)]
 
 
-class BaseEventResponse(Base):
+class EventResponse(Base):
     event_id: int
     name: constr(max_length=64)
     date: datetime
@@ -62,60 +62,60 @@ class BaseEventResponse(Base):
     suffix: constr(max_length=16)
 
 
-class BaseKeyResponse(Base):
+class KeyResponse(Base):
     word: constr(max_length=64)
     language: constr(max_length=16)
 
 
-class BaseSettingResponse(Base):
+class SettingResponse(Base):
     date: datetime
     db_version: int
     last_word_id: int
     db_release: constr(max_length=16)
 
 
-class BaseSyllableResponse(Base):
+class SyllableResponse(Base):
     name: constr(max_length=8)
     type_: constr(max_length=32)
     allowed: bool
 
 
-class BaseAuthorDetailedResponse(BaseAuthorResponse):
-    contribution: List[BaseWordResponse] = []
+class AuthorDetailedResponse(AuthorResponse):
+    contribution: List[WordResponse] = []
 
 
-class BaseDefinitionDetailedResponse(BaseDefinitionResponse):
-    source_word: BaseWordResponse
-    keys: List[BaseKeyResponse] = []
+class DefinitionDetailedResponse(DefinitionResponse):
+    source_word: WordResponse
+    keys: List[KeyResponse] = []
 
 
-class BaseEventDetailedResponse(BaseEventResponse):
-    deprecated_words: List[BaseWordResponse] = []
-    appeared_words: List[BaseWordResponse] = []
+class EventDetailedResponse(EventResponse):
+    deprecated_words: List[WordResponse] = []
+    appeared_words: List[WordResponse] = []
 
 
-class BaseKeyDetailedResponse(BaseKeyResponse):
-    definitions: List[BaseDefinitionResponse] = []
+class KeyDetailedResponse(KeyResponse):
+    definitions: List[DefinitionResponse] = []
 
 
-class BaseTypeDetailedResponse(BaseTypeResponse):
-    words: List[BaseWordResponse] = []
+class TypeDetailedResponse(TypeResponse):
+    words: List[WordResponse] = []
 
 
-class BaseWordDetailedResponse(BaseWordResponse):
-    authors: List[BaseAuthorResponse]
-    type: BaseTypeResponse
-    event_start: BaseEventResponse
-    event_end: Optional[BaseEventResponse] = None
-    definitions: List[BaseDefinitionResponse]
-    derivatives: List[BaseWordResponse] = []
-    affixes: List[BaseWordResponse] = []
-    complexes: List[BaseWordResponse] = []
+class WordDetailedResponse(WordResponse):
+    authors: List[AuthorResponse]
+    type: TypeResponse
+    event_start: EventResponse
+    event_end: Optional[EventResponse] = None
+    definitions: List[DefinitionResponse]
+    derivatives: List[WordResponse] = []
+    affixes: List[WordResponse] = []
+    complexes: List[WordResponse] = []
 
 
-class BaseSettingDetailedResponse(BaseSettingResponse):
+class SettingDetailedResponse(SettingResponse):
     pass
 
 
-class BaseSyllableDetailedResponse(BaseSyllableResponse):
+class SyllableDetailedResponse(SyllableResponse):
     pass

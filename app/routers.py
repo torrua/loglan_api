@@ -12,88 +12,46 @@ from loglan_core import (
 )
 
 from app.models import (
-    BaseDefinitionResponse,
-    BaseWordResponse,
-    BaseKeyResponse,
-    BaseAuthorResponse,
-    BaseTypeResponse,
-    BaseEventResponse,
-    BaseSettingResponse,
-    BaseSyllableResponse,
-    BaseDefinitionDetailedResponse,
-    BaseWordDetailedResponse,
-    BaseSettingDetailedResponse,
-    BaseSyllableDetailedResponse,
+    DefinitionResponse,
+    WordResponse,
+    KeyResponse,
+    AuthorResponse,
+    TypeResponse,
+    EventResponse,
+    SettingResponse,
+    SyllableResponse,
+    DefinitionDetailedResponse,
+    WordDetailedResponse,
+    SettingDetailedResponse,
+    SyllableDetailedResponse,
 )
 from app.base import (
     create_router,
 )
 from app.validators import (
-    word_validate_relationships,
-    definition_validate_relationships,
-    event_validate_relationships,
-    type_validate_relationships,
-    keys_validate_relationships,
-    author_validate_relationships,
+    word_validator,
+    definition_validator,
+    event_validator,
+    type_validator,
+    keys_validator,
+    author_validator,
 )
 
-router_authors = create_router(
-    orm_model=Author,
-    base_response_model=BaseAuthorResponse,
-    detailed_response_model=BaseAuthorResponse,
-    validate_func=author_validate_relationships,
+router_authors = (Author, AuthorResponse, AuthorResponse, author_validator)
+router_words = (Word, WordResponse, WordDetailedResponse, word_validator)
+router_events = (Event, EventResponse, EventResponse, event_validator)
+router_types = (Type, TypeResponse, TypeResponse, type_validator)
+router_keys = (Key, KeyResponse, KeyResponse, keys_validator)
+router_settings = (Setting, SettingResponse, SettingDetailedResponse, None)
+router_syllables = (Syllable, SyllableResponse, SyllableDetailedResponse, None)
+router_definitions = (
+    Definition,
+    DefinitionResponse,
+    DefinitionDetailedResponse,
+    definition_validator,
 )
 
-router_words = create_router(
-    orm_model=Word,
-    base_response_model=BaseWordResponse,
-    detailed_response_model=BaseWordDetailedResponse,
-    validate_func=word_validate_relationships,
-)
-
-router_definitions = create_router(
-    orm_model=Definition,
-    base_response_model=BaseDefinitionResponse,
-    detailed_response_model=BaseDefinitionDetailedResponse,
-    validate_func=definition_validate_relationships,
-)
-
-router_events = create_router(
-    orm_model=Event,
-    base_response_model=BaseEventResponse,
-    detailed_response_model=BaseEventResponse,
-    validate_func=event_validate_relationships,
-)
-
-router_types = create_router(
-    orm_model=Type,
-    base_response_model=BaseTypeResponse,
-    detailed_response_model=BaseTypeResponse,
-    validate_func=type_validate_relationships,
-)
-
-router_keys = create_router(
-    orm_model=Key,
-    base_response_model=BaseKeyResponse,
-    detailed_response_model=BaseKeyResponse,
-    validate_func=keys_validate_relationships,
-)
-
-router_settings = create_router(
-    orm_model=Setting,
-    base_response_model=BaseSettingResponse,
-    detailed_response_model=BaseSettingDetailedResponse,
-    validate_func=None,
-)
-
-router_syllables = create_router(
-    orm_model=Syllable,
-    base_response_model=BaseSyllableResponse,
-    detailed_response_model=BaseSyllableDetailedResponse,
-    validate_func=None,
-)
-
-routers = [
+routers_data = [
     router_authors,
     router_words,
     router_definitions,
@@ -103,3 +61,5 @@ routers = [
     router_settings,
     router_syllables,
 ]
+
+routers = [create_router(*item) for item in routers_data]
