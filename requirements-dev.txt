@@ -1,0 +1,7 @@
+-r requirements.txt
+
+python-dotenv
+radon
+pylint
+black
+mypy

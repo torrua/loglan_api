@@ -1,1 +1,1 @@
-# loglan_api
+# Loglan API
