@@ -40,29 +40,15 @@ from app.validators import (
     author_validator,
 )
 
-router_authors = (Author, AuthorResponse, AuthorResponse, author_validator)
-router_words = (Word, WordResponse, WordDetailedResponse, word_validator)
-router_events = (Event, EventResponse, EventDetailedResponse, event_validator)
-router_types = (Type, TypeResponse, TypeDetailedResponse, type_validator)
-router_keys = (Key, KeyResponse, KeyDetailedResponse, keys_validator)
-router_settings = (Setting, SettingResponse, SettingDetailedResponse, None)
-router_syllables = (Syllable, SyllableResponse, SyllableDetailedResponse, None)
-router_definitions = (
-    Definition,
-    DefinitionResponse,
-    DefinitionDetailedResponse,
-    definition_validator,
-)
-
 routers_data = [
-    router_authors,
-    router_words,
-    router_definitions,
-    router_events,
-    router_types,
-    router_keys,
-    router_settings,
-    router_syllables,
+    (Author, AuthorResponse, AuthorResponse, author_validator),
+    (Definition, DefinitionResponse, DefinitionDetailedResponse, definition_validator),
+    (Word, WordResponse, WordDetailedResponse, word_validator),
+    (Event, EventResponse, EventDetailedResponse, event_validator),
+    (Type, TypeResponse, TypeDetailedResponse, type_validator),
+    (Key, KeyResponse, KeyDetailedResponse, keys_validator),
+    (Setting, SettingResponse, SettingDetailedResponse, None),
+    (Syllable, SyllableResponse, SyllableDetailedResponse, None),
 ]
 
 routers = [create_router(*item) for item in routers_data]
