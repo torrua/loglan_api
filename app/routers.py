@@ -24,6 +24,9 @@ from app.models import (
     WordDetailedResponse,
     SettingDetailedResponse,
     SyllableDetailedResponse,
+    EventDetailedResponse,
+    TypeDetailedResponse,
+    KeyDetailedResponse,
 )
 from app.base import (
     create_router,
@@ -39,9 +42,9 @@ from app.validators import (
 
 router_authors = (Author, AuthorResponse, AuthorResponse, author_validator)
 router_words = (Word, WordResponse, WordDetailedResponse, word_validator)
-router_events = (Event, EventResponse, EventResponse, event_validator)
-router_types = (Type, TypeResponse, TypeResponse, type_validator)
-router_keys = (Key, KeyResponse, KeyResponse, keys_validator)
+router_events = (Event, EventResponse, EventDetailedResponse, event_validator)
+router_types = (Type, TypeResponse, TypeDetailedResponse, type_validator)
+router_keys = (Key, KeyResponse, KeyDetailedResponse, keys_validator)
 router_settings = (Setting, SettingResponse, SettingDetailedResponse, None)
 router_syllables = (Syllable, SyllableResponse, SyllableDetailedResponse, None)
 router_definitions = (
