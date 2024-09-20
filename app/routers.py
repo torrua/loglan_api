@@ -11,6 +11,7 @@ from loglan_core import (
     Author,
 )
 
+from app.create_router import create_router
 from app.models import (
     DefinitionResponse,
     WordResponse,
@@ -27,9 +28,6 @@ from app.models import (
     EventDetailedResponse,
     TypeDetailedResponse,
     KeyDetailedResponse,
-)
-from app.base import (
-    create_router,
 )
 from app.validators import (
     word_validator,
@@ -51,4 +49,7 @@ routers_data = [
     (Syllable, SyllableResponse, SyllableDetailedResponse, None),
 ]
 
-routers = [create_router(*item) for item in routers_data]
+routers = [
+    create_router(model, response_model, detailed_response_model, validator)
+    for model, response_model, detailed_response_model, validator in routers_data
+]
