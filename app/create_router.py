@@ -27,69 +27,68 @@ def create_router(
         tags=[orm_model.__tablename__.capitalize()],
     )
 
-    @router.get("/all", response_model=List[base_response_model])
-    async def get_items(
-        db: AsyncSession = Depends(get_db),
-    ) -> List[base_response_model]:
-        result = await db.execute(BaseSelector(model=orm_model).get_statement())
-        items = result.scalars().all()
-        if items is None:
-            raise HTTPException(
-                status_code=404, detail=f"{orm_model.__name__}s not found"
-            )
-        response = [base_response_model.model_validate(item) for item in items]
-        return response
-
-    @router.get("/", response_model=detailed_response_model)
+    @router.get(
+        "/",
+        response_model=List[detailed_response_model | base_response_model],
+        summary=f"Get items from {orm_model.__tablename__}",
+    )
     async def get_item(
         request: Request,
         db: AsyncSession = Depends(get_db),
-    ) -> detailed_response_model:
+    ) -> List[detailed_response_model | base_response_model]:
 
+        params = dict(request.query_params)
         orm_fields = sorted(column.name for column in inspect(orm_model).c)
+        detailed = params.pop("detailed", "false") == "true"
+        case_sensitive = params.pop("case_sensitive", "false") == "true"
+        query = BaseSelector(model=orm_model, case_sensitive=case_sensitive)
 
-        await validate_query_params(request, orm_fields)
+        if detailed:
+            query = query.with_relationships()
 
-        # Check for the required 'id' parameter
-        if id_param := request.query_params.get("id", None):
-            id_ = int(id_param)
+        if params:
+            validate_query_params(params, orm_fields)
+            print(params)
+            query = query.where_like(**params)
+
+        result = await db.execute(query.get_statement())
+
+        if detailed:
+            items = result.scalars().unique().all()
+            response_model = detailed_response_model
         else:
-            raise HTTPException(
-                status_code=400, detail=f"{orm_model.__name__} ID is required"
-            )
+            items = result.scalars().all()
+            response_model = base_response_model
 
-        query = (
-            BaseSelector(model=orm_model)
-            .with_relationships()
-            .filter_by(id=id_)
-            .get_statement()
-        )
-        result = await db.execute(query)
-        item = result.scalars().first()
-
-        if item is None:
+        if items is None:
             raise HTTPException(
                 status_code=404, detail=f"{orm_model.__name__} not found"
             )
 
-        response = detailed_response_model.model_validate(item)
+        response = []
 
-        if validate_func:
-            validate_func(response, item)
+        for item in items:
+            data = response_model.model_validate(item)
+
+            if validate_func and detailed:
+                validate_func(data, item)
+
+            response.append(data)
+
         return response
 
-    async def validate_query_params(request: Request, orm_fields: List[str]) -> None:
+    def validate_query_params(params: dict, orm_fields: List[str]) -> None:
         """
         Validate the query parameters
 
         Args:
-            request: The request object
+            params: The request object
             orm_fields: The list of ORM fields
 
         Raises:
             HTTPException: If the query parameter is not in the list of ORM fields
         """
-        for param in request.query_params.keys():
+        for param in params.keys():
             if param not in orm_fields:
                 raise HTTPException(
                     status_code=400,

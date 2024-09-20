@@ -1,52 +1,53 @@
 from __future__ import annotations
 
 from loglan_core import (
-    Word,
-    Event,
+    Author,
     Definition,
-    Type,
+    Event,
     Key,
     Setting,
     Syllable,
-    Author,
+    Type,
+    Word,
 )
 
 from app.create_router import create_router
 from app.models import (
-    DefinitionResponse,
-    WordResponse,
-    KeyResponse,
     AuthorResponse,
-    TypeResponse,
+    DefinitionResponse,
     EventResponse,
+    KeyResponse,
     SettingResponse,
     SyllableResponse,
+    TypeResponse,
+    WordResponse,
+    AuthorDetailedResponse,
     DefinitionDetailedResponse,
-    WordDetailedResponse,
+    EventDetailedResponse,
+    KeyDetailedResponse,
     SettingDetailedResponse,
     SyllableDetailedResponse,
-    EventDetailedResponse,
     TypeDetailedResponse,
-    KeyDetailedResponse,
+    WordDetailedResponse,
 )
 from app.validators import (
-    word_validator,
+    author_validator,
     definition_validator,
     event_validator,
-    type_validator,
     keys_validator,
-    author_validator,
+    type_validator,
+    word_validator,
 )
 
 routers_data = [
-    (Author, AuthorResponse, AuthorResponse, author_validator),
+    (Author, AuthorResponse, AuthorDetailedResponse, author_validator),
     (Definition, DefinitionResponse, DefinitionDetailedResponse, definition_validator),
-    (Word, WordResponse, WordDetailedResponse, word_validator),
     (Event, EventResponse, EventDetailedResponse, event_validator),
-    (Type, TypeResponse, TypeDetailedResponse, type_validator),
     (Key, KeyResponse, KeyDetailedResponse, keys_validator),
     (Setting, SettingResponse, SettingDetailedResponse, None),
     (Syllable, SyllableResponse, SyllableDetailedResponse, None),
+    (Type, TypeResponse, TypeDetailedResponse, type_validator),
+    (Word, WordResponse, WordDetailedResponse, word_validator),
 ]
 
 routers = [
