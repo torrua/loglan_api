@@ -5,7 +5,11 @@ from typing import AsyncGenerator
 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-SQLALCHEMY_DATABASE_URL = os.getenv("LOD_DATABASE_URL_ASYNC")
+SQLALCHEMY_DATABASE_URL = os.getenv("LOD_DATABASE_URL_ASYNC", None)
+
+if not SQLALCHEMY_DATABASE_URL:
+    raise ValueError("LOD_DATABASE_URL_ASYNC is not set")
+
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL, echo=True)
 
 async_session_maker = async_sessionmaker(
