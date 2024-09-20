@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Optional, Dict, List
 
 from pydantic import BaseModel, constr
@@ -18,13 +18,15 @@ class WordResponse(Base):
     type_id: int
     event_start_id: int
     event_end_id: Optional[int]
-    tid_old: Optional[int]
     origin: Optional[constr(max_length=128)]
     origin_x: Optional[constr(max_length=64)]
     match: Optional[constr(max_length=8)]
     rank: Optional[constr(max_length=8)]
-    year: Optional[datetime]
+    year: Optional[date]
     notes: Optional[Dict[str, str]]
+
+    class Config:
+        json_encoders = {date: lambda v: int(v.strftime("%Y")) if v else None}
 
 
 class DefinitionResponse(Base):
@@ -56,7 +58,7 @@ class TypeResponse(Base):
 class EventResponse(Base):
     event_id: int
     name: constr(max_length=64)
-    date: datetime
+    date: date
     definition: str
     annotation: constr(max_length=16)
     suffix: constr(max_length=16)
