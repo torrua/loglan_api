@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from loglan_core import Word, Definition, Author, Type, Event, Key
 
 from app.models import (
@@ -17,7 +18,7 @@ from app.models import (
 )
 
 
-async def word_validator(
+def word_validator(
     response: WordDetailedResponse,
     item: Word,
 ) -> None:
@@ -34,7 +35,7 @@ async def word_validator(
         response.event_end = EventResponse.model_validate(item.event_end)
 
 
-async def definition_validator(
+def definition_validator(
     response: DefinitionDetailedResponse,
     definition: Definition,
 ) -> None:
@@ -42,7 +43,7 @@ async def definition_validator(
     response.keys = [KeyResponse.model_validate(key) for key in definition.keys]
 
 
-async def event_validator(
+def event_validator(
     response: EventDetailedResponse,
     item: Event,
 ) -> None:
@@ -54,14 +55,14 @@ async def event_validator(
     ]
 
 
-async def type_validator(
+def type_validator(
     response: TypeDetailedResponse,
     item: Type,
 ) -> None:
     response.words = [WordResponse.model_validate(i) for i in item.words]
 
 
-async def keys_validator(
+def keys_validator(
     response: KeyDetailedResponse,
     item: Key,
 ) -> None:
@@ -70,7 +71,7 @@ async def keys_validator(
     ]
 
 
-async def author_validator(
+def author_validator(
     response: AuthorDetailedResponse,
     item: Author,
 ) -> None:
