@@ -48,7 +48,6 @@ def create_router(
 
         if params:
             validate_query_params(params, orm_fields)
-            print(params)
             query = query.where_like(**params)
 
         result = await db.execute(query.get_statement())
