@@ -93,6 +93,7 @@ def create_router(
 
     return router
 
+
 def separate_arguments(model, args):
     skipped_args = {}
     model_args = {}
@@ -102,6 +103,7 @@ def separate_arguments(model, args):
         else:
             skipped_args[parameter] = value
     return model_args, skipped_args
+
 
 """
 def pass():
