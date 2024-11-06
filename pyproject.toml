@@ -4,7 +4,7 @@ disable = [
     "C0114",  # missing-module-docstring
     "C0115",  # missing-class-docstring
     "C0116",  # missing-function-docstring
-    "R0903", # too-few-public-methods
+    "R0903",  # too-few-public-methods
 ]
 max-line-length = 100
 output-format = "text"

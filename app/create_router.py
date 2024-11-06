@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.inspection import inspect
 from starlette.requests import Request
 
-from app.engine import get_db
+from app.engine import get_db, API_PATH, API_VERSION
 from app.models import Base
 
 T = TypeVar("T", bound=BaseORMModel)
@@ -23,7 +23,7 @@ def create_router(
     validate_func: Optional[Callable[[Base, Row[T]], None]] = None,
 ) -> APIRouter:
     router = APIRouter(
-        prefix=f"/api/v2/{orm_model.__tablename__.lower()}",
+        prefix=f"/{API_PATH}/{API_VERSION}/{orm_model.__tablename__.lower()}",
         tags=[orm_model.__tablename__.capitalize()],
     )
 
@@ -50,14 +50,8 @@ def create_router(
             validate_query_params(params, orm_fields)
             query = query.where_like(**params)
 
-        result = await db.execute(query.get_statement())
-
-        if detailed:
-            items = result.scalars().unique().all()
-            response_model = detailed_response_model
-        else:
-            items = result.scalars().all()
-            response_model = base_response_model
+        items = await query.all_async(session=db, unique=detailed)
+        response_model = detailed_response_model if detailed else base_response_model
 
         if items is None:
             raise HTTPException(
@@ -98,3 +92,40 @@ def create_router(
                 )
 
     return router
+
+def separate_arguments(model, args):
+    skipped_args = {}
+    model_args = {}
+    for parameter, value in args.items():
+        if parameter in model.attributes_all():
+            model_args[parameter] = value
+        else:
+            skipped_args[parameter] = value
+    return model_args, skipped_args
+
+"""
+def pass():
+    Response(
+        mimetype="application/json",
+        response=json.dumps(
+            {
+                "result": True,
+                "data": data,
+                "count": count,
+                "skipped_arguments": skipped_args,
+                "detailed": detailed,
+            }
+        ),
+        status=200,
+    )
+
+
+def filter_statement_by_event_id(model, event_id):
+    api_section = request.path.strip("/").split("/")[-1]
+    if event_id:
+        if api_section == "words":
+            return WordSelector().by_event(event_id=int(event_id)).get_statement()
+        if api_section == "keys":
+            return KeySelector().by_event(event_id=int(event_id)).get_statement()
+    return select(model)
+"""

@@ -7,6 +7,8 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 
 SQLALCHEMY_DATABASE_URL = os.getenv("LOD_DATABASE_URL_ASYNC", None)
 ENGINE_ECHO_SQL = os.getenv("LOD_ENGINE_ECHO_SQL", "0")
+API_PATH = os.getenv("API_PATH", "api")
+API_VERSION = os.getenv("API_VERSION", "v2")
 
 if not SQLALCHEMY_DATABASE_URL:
     raise ValueError("LOD_DATABASE_URL_ASYNC is not set")
