@@ -126,7 +126,8 @@ class SyllableDetailedResponse(SyllableResponse):
 
 class ResponseModel(BaseModel):
     result: bool
-    skipped_arguments: List[str] | None = None
+    skipped_arguments: Optional[List[str]]
+    case_sensitive: bool
     detailed: bool
     count: int
     data: list
