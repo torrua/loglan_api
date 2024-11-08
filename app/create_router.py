@@ -36,8 +36,8 @@ def create_router(
     ) -> ResponseModel:
 
         params = dict(request.query_params)
-        detailed = params.pop("detailed", "false") == "true"
-        case_sensitive = params.pop("case_sensitive", "false") == "true"
+        detailed = params.pop("detailed", "false").lower() == "true"
+        case_sensitive = params.pop("case_sensitive", "false").lower() == "true"
         orm_fields, skipped_fields = separate_params(params)
 
         query = BaseSelector(model=orm_model, case_sensitive=case_sensitive)
@@ -49,15 +49,37 @@ def create_router(
             query = query.where_like(**orm_fields)
 
         items = await query.all_async(session=db, unique=detailed)
-        response_model = detailed_response_model if detailed else base_response_model
 
         if items is None:
             raise HTTPException(
                 status_code=404, detail=f"{orm_model.__name__} not found"
             )
 
-        response = []
+        data = get_validated_data(items, detailed)
 
+        result = ResponseModel(
+            result=True,
+            count=len(data),
+            detailed=detailed,
+            data=data,
+            skipped_arguments=skipped_fields,
+            case_sensitive=case_sensitive,
+        )
+        return result
+
+    def get_validated_data(items: list, detailed: bool) -> list:
+        """ Get validated data from items
+
+        Args:
+            items (list): List of items to validate
+            detailed (bool): Whether to validate detailed data
+
+        Returns:
+            list: Validated data
+        """
+        response_model = detailed_response_model if detailed else base_response_model
+
+        response = []
         for item in items:
             data = response_model.model_validate(item)
 
@@ -65,16 +87,7 @@ def create_router(
                 validate_func(data, item)
 
             response.append(data)
-
-        result = ResponseModel(
-            result=True,
-            count=len(response),
-            detailed=detailed,
-            data=response,
-            skipped_arguments=skipped_fields,
-            case_sensitive=case_sensitive,
-        )
-        return result
+        return response
 
     def separate_params(params: dict) -> tuple[dict, list]:
         """
