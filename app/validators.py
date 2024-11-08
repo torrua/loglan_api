@@ -24,7 +24,7 @@ def word_validator(
 ) -> None:
     response.derivatives = [WordResponse.model_validate(i) for i in item.derivatives]
     response.affixes = [WordResponse.model_validate(i) for i in item.affixes]
-    response.affixes = [WordResponse.model_validate(i) for i in item.complexes]
+    response.complexes = [WordResponse.model_validate(i) for i in item.complexes]
     response.definitions = [
         DefinitionResponse.model_validate(i) for i in item.definitions
     ]
