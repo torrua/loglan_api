@@ -11,7 +11,7 @@ from sqlalchemy.inspection import inspect
 from starlette.requests import Request
 
 from app.engine import get_db, API_PATH, API_VERSION
-from app.models import Base
+from app.models import Base, ResponseModel
 
 T = TypeVar("T", bound=BaseORMModel)
 
@@ -29,13 +29,13 @@ def create_router(
 
     @router.get(
         "/",
-        response_model=List[detailed_response_model | base_response_model],
+        response_model=ResponseModel,
         summary=f"Get items from {orm_model.__tablename__}",
     )
     async def get_item(
         request: Request,
         db: AsyncSession = Depends(get_db),
-    ) -> List[detailed_response_model | base_response_model]:
+    ) -> ResponseModel:
 
         params = dict(request.query_params)
         orm_fields = sorted(column.name for column in inspect(orm_model).c)
@@ -68,7 +68,14 @@ def create_router(
 
             response.append(data)
 
-        return response
+        result = ResponseModel(
+            result=True,
+            count=len(response),
+            detailed=detailed,
+            data=response,
+            # skipped_arguments=list(params.keys()),
+        )
+        return result
 
     def validate_query_params(params: dict, orm_fields: List[str]) -> None:
         """
