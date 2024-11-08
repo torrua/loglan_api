@@ -113,6 +113,7 @@ class WordDetailedResponse(WordResponse):
     derivatives: List[WordResponse] = []
     affixes: List[WordResponse] = []
     complexes: List[WordResponse] = []
+    parents: List[WordResponse] = []
 
 
 class SettingDetailedResponse(SettingResponse):
