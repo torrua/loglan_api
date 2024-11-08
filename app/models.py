@@ -121,3 +121,11 @@ class SettingDetailedResponse(SettingResponse):
 
 class SyllableDetailedResponse(SyllableResponse):
     pass
+
+
+class ResponseModel(BaseModel):
+    result: bool
+    data: List[Base]
+    count: int
+    skipped_arguments: List[str] | None = None
+    detailed: bool
