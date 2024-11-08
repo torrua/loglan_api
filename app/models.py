@@ -83,25 +83,25 @@ class SyllableResponse(Base):
 
 
 class AuthorDetailedResponse(AuthorResponse):
-    contribution: List[WordResponse] = []
+    contribution: Optional[List[WordResponse]]
 
 
 class DefinitionDetailedResponse(DefinitionResponse):
     source_word: WordResponse
-    keys: List[KeyResponse] = []
+    keys: Optional[List[KeyResponse]]
 
 
 class EventDetailedResponse(EventResponse):
-    deprecated_words: List[WordResponse] = []
-    appeared_words: List[WordResponse] = []
+    deprecated_words: Optional[List[WordResponse]]
+    appeared_words: Optional[List[WordResponse]]
 
 
 class KeyDetailedResponse(KeyResponse):
-    definitions: List[DefinitionResponse] = []
+    definitions: Optional[List[DefinitionResponse]]
 
 
 class TypeDetailedResponse(TypeResponse):
-    words: List[WordResponse] = []
+    words: Optional[List[WordResponse]]
 
 
 class WordDetailedResponse(WordResponse):
@@ -110,10 +110,10 @@ class WordDetailedResponse(WordResponse):
     event_start: EventResponse
     event_end: Optional[EventResponse] = None
     definitions: List[DefinitionResponse]
-    derivatives: List[WordResponse] = []
-    affixes: List[WordResponse] = []
-    complexes: List[WordResponse] = []
-    parents: List[WordResponse] = []
+    derivatives: Optional[List[WordResponse]]
+    affixes: Optional[List[WordResponse]]
+    complexes: Optional[List[WordResponse]]
+    parents: Optional[List[WordResponse]]
 
 
 class SettingDetailedResponse(SettingResponse):
