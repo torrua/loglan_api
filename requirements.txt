@@ -1,4 +1,4 @@
-asyncpg >=0.30
+asyncpg>=0.30
 fastapi>=0.115
 loglan-core >=0.5
 pydantic>=2.9.1
