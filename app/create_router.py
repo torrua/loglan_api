@@ -68,7 +68,7 @@ def create_router(
         return result
 
     def get_validated_data(items: list, detailed: bool) -> list:
-        """ Get validated data from items
+        """Get validated data from items
 
         Args:
             items (list): List of items to validate
