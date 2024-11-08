@@ -1,6 +1,4 @@
-from __future__ import annotations
-
-from typing import TypeVar, Callable, List, Optional
+from typing import TypeVar, Callable, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from loglan_core import Base as BaseORMModel
@@ -38,17 +36,17 @@ def create_router(
     ) -> ResponseModel:
 
         params = dict(request.query_params)
-        orm_fields = sorted(column.name for column in inspect(orm_model).c)
         detailed = params.pop("detailed", "false") == "true"
         case_sensitive = params.pop("case_sensitive", "false") == "true"
+        orm_fields, skipped_fields = separate_params(params)
+
         query = BaseSelector(model=orm_model, case_sensitive=case_sensitive)
 
         if detailed:
             query = query.with_relationships()
 
-        if params:
-            validate_query_params(params, orm_fields)
-            query = query.where_like(**params)
+        if orm_fields:
+            query = query.where_like(**orm_fields)
 
         items = await query.all_async(session=db, unique=detailed)
         response_model = detailed_response_model if detailed else base_response_model
@@ -73,29 +71,24 @@ def create_router(
             count=len(response),
             detailed=detailed,
             data=response,
-            # skipped_arguments=list(params.keys()),
+            skipped_arguments=skipped_fields,
+            case_sensitive=case_sensitive,
         )
         return result
 
-    def validate_query_params(params: dict, orm_fields: List[str]) -> None:
+    def separate_params(params: dict) -> tuple[dict, list]:
         """
-        Validate the query parameters
+        Separate params into ORM params and skipped params
 
         Args:
-            params: The request object
-            orm_fields: The list of ORM fields
+            params (dict): Query parameters
 
-        Raises:
-            HTTPException: If the query parameter is not in the list of ORM fields
+        Returns:
+            tuple[dict, list]: ORM params and skipped params
         """
-        for param in params.keys():
-            if param not in orm_fields:
-                raise HTTPException(
-                    status_code=400,
-                    detail=(
-                        f"Invalid query parameter: {param}. "
-                        f"Allowed parameters are: {', '.join(orm_fields)}"
-                    ),
-                )
+        orm_fields = sorted(column.name for column in inspect(orm_model).c)
+        orm_params = {k: v for k, v in params.items() if k in orm_fields}
+        skipped_params = [k for k in params if k not in orm_fields]
+        return orm_params, skipped_params
 
     return router
